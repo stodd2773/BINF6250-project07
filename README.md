@@ -86,7 +86,7 @@ We found most of the algorithms complexity lied within its implementation, rathe
 
 # Personal Reflections
 ## Group Leader
-Group leader's reflection on the project
+Spencer Todd: I thought this weeks project walked the line between fun and challenging well. A major success for me was the ability to walk through and talk out the logic for this algorithm with Linh and Eric, as it was easy to get lost in the implementation. I struggled with the aspects of implementaion that relied heavy on indexing, initially struggling with string matching and understanding conceptually the properties of BWT that allow us to shift search windows in the BWT to find the position in the original string of our queried sub-string.
 
 ## Other member
 Other members' reflections on the project
