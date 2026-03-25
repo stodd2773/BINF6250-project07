@@ -2,9 +2,59 @@
 This project implements the Burrows-Wheeler Transform (BWT) algorithm to manipulate and encode a given string with the purpose of data compression. Additional properties of the BWT are also leveraged here to create a string-matching tool that returns the position of the queried 'sub-string' within the larger string. 
 
 # Pseudocode
-Put pseudocode in this box:
+```python
 
-```
+
+function make_suffix_array:
+	new_string = query + $
+	let suffix_list be a list
+	let suffixes be a list
+	for i in length of new_string do
+		slice off first character of new_string
+		append to suffixes
+		append i to suffix_list
+	lexicographical sort suffixes			#this creates the upper triangle of the matrix without matrix formatting; keep indices with suffixes
+
+function BW_transform:
+	let new_string be query + $
+	let suffix_array be the indices sorted according to the suffixes
+	let suffixes be the sorted suffixes
+	let BWT be an array for characters
+	for i in length of suffix_list do
+		q = suffix_array[i] - 1				#pointer points us to the correct index in the original string shifted by 1 for $
+		append new_string[q] to BWT			#retrieved the correct corresponding character in the original
+
+function search_BWT:
+	let left_col be the suffix_list aligned with suffixes from make_suffix_array
+	let right_col be the BWT characters from BW_transform
+	left suffix_array be the original indices gathered from make_suffix_array
+	let query be the search query
+	let reference be new_string from earlier
+
+	create "count array"					#this is the array of first-occurrence indices in left_col
+	create "occurrence array"				#this is the cumulative array of occurrence indices in right_col
+
+	#=== search code ===
+	upper = len(suffix_array) - 1			#pointer for the upper search index
+	lower = 0								#pointer for the lower search index
+
+	for character in reversed query do
+		i = "count array"[character]
+
+		if lower <= 0:						#used less than or equal to because of off-by-one issues
+			lower = i
+		else
+			lower = i + "occurrence array"[character][lower - 1]
+
+		upper = i + "occurrence array"[character][upper] - 1
+
+	query_index = suffix_array[lower: upper + 1]		#just slice the original suffix array to get the indices of the original string for the query
+														#this is the index in the original string of the query
+	
+		
+'''implementation notes'''
+
+
 orig = original string
 query = query string
 
@@ -82,7 +132,7 @@ for c in reversed(query):
 A major success was the teams ability to talk through the implementation, ensuring everyone was on the same page and able to understand what each line of code was doing. This in turn led to effective troubleshooting, being able to talk through the issues and identifying where execution was going wrong. In the end, we were able to successfully implement the algorithm, which felt like another big success to us.
 
 # Struggles
-We found most of the algorithms complexity lied within its implementation, rather than our understanding of it. The most significant hurdle was navigating the indexing challenges that naturally accompanied the algorithms implementation for string-matching. Most of the debugging and troubleshooting occured within the match finding algorithm, where we were finding that we were consistently off from identifying the position of the query by one index. 
+We found most of the algorithms complexity lied within its implementation, rather than our understanding of it. The most significant hurdle was navigating the indexing challenges that naturally accompanied the algorithms implementation for string-matching. Most of the debugging and troubleshooting occured within the match finding algorithm, where we were finding that we were consistently off from identifying the position of the query by one index. It required a lot of trial and error to figure this out
 
 # Personal Reflections
 ## Group Leader
@@ -90,6 +140,8 @@ Spencer Todd: I thought this weeks project walked the line between fun and chall
 
 ## Other member
 Other members' reflections on the project
+
+Eric Arnold: This was a fun algorithm. The concept of a transform in discrete space is difficult to wrap your head around at first. Typically transformations like this use eigenvalues and vectors (PCA, TSVD) or some kind of gradient optimization. This was the first discrete transformation I'd encountered. I think the key to understanding this one comes in with the search function. The role of upper and lower in pointing to indices in the count and occurrence arrays in reconstructing the original string reveals the fact that the indices of the string have just been remapped. The applications in genomics are clear, where you often encounter multiple repeats in the characters. It would be interesting to see how this algorithm has been applied elsewhere. I can imagine that some verisions of probabilistic models with discrete hidden states can encode large amounts of information using this techinique.
 
 # Generative AI Appendix
 As per the syllabus
